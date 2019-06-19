@@ -1,5 +1,5 @@
-const KEYS = require("./keys.js");
 require("dotenv").config();
+var keys = require("./keys.js");
 
 
 class Liri {
@@ -67,15 +67,15 @@ class Liri {
 
   
   bandsTown() {
-    const bandsInTown = new BandsInTown(KEYS.bandsintown);
+    const bandsInTown = new BandsInTown(keys.bandsintown);
     const artistName = this.liriArg.join(" ");
     bandsInTown.findConcert(artistName);
   }
 
   
   spotifySong() {
-    const spotify = new Spotify(KEYS.spotify);
-    var songName = "The Sign Ace of Base";
+    const spotify = new Spotify(keys.spotify);
+    var songName = "Endless Love";
 
     if (this.liriArg.length > 0) {
       songName = this.liriArg.join(" ");
@@ -84,8 +84,9 @@ class Liri {
   }
   
   omdbMovie() {
-    const omdb = new OMDbAPI(KEYS.omdb);
-    var movieName = "Mr. Nobody";
+    const omdb = new OMDbAPI(keys.omdb);
+    
+    var movieName = this.liriArg.join(" ");
 
     if (this.liriArg.length > 0) {
       movieName = this.liriArg.join(" ");
@@ -126,7 +127,7 @@ class Liri {
   }
 }
 
-
+// Commands for saerching for Artist Concert in Town
 class BandsInTown {
   
   constructor(key) {
@@ -191,16 +192,13 @@ class BandsInTown {
 
 
 // Spotify Commands to search for songs
-
-class Spotify {
+class Spotify {  
   
-  // constructor(key) {
-  constructor(key) {
-    // this.key = Object.entries(key)[0].join('=');
+  constructor(key) {    
     var Spotify = require('node-spotify-api');
     this.api = new Spotify(key);
-    this.spotify = new Spotify(KEYS.spotify);
-    // var Spotify = require('node-spotify-api');
+    this.spotify = new Spotify(keys.spotify);
+   
   }
 
   searchSong(song = "The Sign") {
@@ -246,7 +244,6 @@ class Spotify {
 
 
 // Commads for searching movies in OMDb
-
 class OMDbAPI {
   
   findMovie() {
@@ -272,9 +269,8 @@ class OMDbAPI {
       console.log("*********************************************************************************************************");
       console.log("\n");
     }
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";    
     
-    // This line is just to help us debug against the actual URL.
     console.log(queryUrl);
     
     axios.get(queryUrl).then(
@@ -292,8 +288,7 @@ class OMDbAPI {
       })
       .catch(function(error) {
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
+         
           console.log("---------------Data---------------");
           console.log(error.response.data);
           console.log("---------------Status---------------");
@@ -301,124 +296,18 @@ class OMDbAPI {
           console.log("---------------Status---------------");
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an object that comes back with details pertaining to the error that occurred.
+          
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
+          
           console.log("Error", error.message);
         }
         console.log(error.config);
       });
 
+  }
+
 }
-  // findMovie(movieName = "Mr. Nobody") {
-  //   var query = [
-  //     "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=7116ff6b",
-      
-  //     `t=${movieName}`,
-  //     'page=3',
-  //     'type=movie',
-  //     'r=json'
-  //   ].join('&');
-
-  //   console.log(`\n=======\nFinding the movie "${movieName}"`);
-  //   this.request(query, (error, response, body) => {
-  //     if (error) {
-  //       console.log("ERROR: ", error);
-  //       return;
-  //     }
-
-  //     const jsonObj = this.body2JSON(body);
-  //     if (!jsonObj) return;
-
-  //     console.log(`\n=======\nResult for the movie "${movieName}"`);
-  //     this.printMovieInfo(jsonObj);
-  //   });
-  // }
-
-  //
-  // Convert returned body from "request" to JSON
-  //
-  // RETURN:
-  // * JSON, if successful
-  // * null, otherwise
-  //
-  // body2JSON(body) {
-  //   const data = JSON.parse(body);
-  //   // console.log(data);
-  
-  //   if ('Error' in data) {
-  //     console.log("Error: " + data.Error);
-  //     return null;
-  //   }
-  //   return data;
-  // }
-
-  //
-  // Facilitator function for findMovie to display the result
-  //
-  // PARAMS:
-  // * data = returned data from calling "request" in JSON format
-  //
-  // Output the followings to the screen/terminal:
-  //     * Title of the movie.
-  //     * Year the movie came out.
-  //     * IMDB Rating of the movie.
-  //     * Rotten Tomatoes Rating of the movie.
-  //     * Country where the movie was produced.
-  //     * Language of the movie.
-  //     * Plot of the movie.
-  //     * Actors in the movie.
-  //
-  // printMovieInfo(data) {
-  //   const rottenTomatoes = this.rottenTomatoesRating(data);
-  //   const output = [
-  //     `Title:    ${data.Title}`,
-  //     `Year:     ${data.Year}`,
-  //     `Rating:   IMDb ${data.imdbRating}`,
-  //     `          Rotten Tomatoes ${rottenTomatoes}`,
-  //     `Country:  ${data.Country}`,
-  //     `Language: ${data.Language}`,
-  //     `Plot:     ${data.Plot}`,
-  //     `Actors:   ${data.Actors}`
-  //   ];
-
-  //   console.log(output.join("\n"));
-  // }
-
-  //
-  // Facilitator function for printMovieInfo to get a rating by
-  // RottenTomatoes
-  //
-  // PARAMS:
-  // * data = returned data from calling "request" in JSON format
-  //
-  // RETURN:
-  // * Rating value by RottenTomatoes
-  //
-  // rottenTomatoesRating(data) {
-  //   var rottenTomatoes = "(unavailable)";
-
-  //   if ('Ratings' in data) {
-  //     var rtRating = data.Ratings.filter(rating =>
-  //       rating.Source === 'Rotten Tomatoes'
-  //     );
-  //     // console.log(rtRaiting);
-
-  //     if (rtRating.length === 1) {
-  //       rottenTomatoes = rtRating.shift().Value;
-  //     }
-  //   }
-
-  //   return rottenTomatoes;
-  // }
-}
-
-
-// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-//  MAIN
-// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 const liri = new Liri();
 
