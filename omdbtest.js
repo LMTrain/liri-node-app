@@ -2,6 +2,10 @@ var liriCommand = process.argv[2];
 
 var axios = require("axios");
 
+require("dotenv").config();
+var keys = require("./keys.js");
+
+
 
 
 if (liriCommand === "movie-this") {
@@ -105,10 +109,10 @@ function bandsTown() {
     
     axios.get(queryUrl).then(
       function(response) {
-        console.log("Artist Name: " + response.data.Artist);
-        console.log("Concert Venue: " + response.data.Venue);
-        console.log("Location of Venue: " + response.data.Location);
-        console.log("Concert Date: " + response.data.date);
+        console.log("Artist Name: " + response.data.lineup);
+        console.log("Concert Venue: " + response.data.venue.name);
+        console.log("Location of Venue: " + response.data.venue.country);
+        console.log("Concert Date: " + response.data.datetime);
         
       })
       .catch(function(error) {
@@ -135,53 +139,42 @@ function bandsTown() {
 }
 
 function spotifySong() {
+    var spotify = new Spotify(keys.spotify);
 
-    var nodeArgs = process.argv;
-    var song = "";
+    var Spotify = require('node-spotify-api');
     
-    for (var i = 3; i < nodeArgs.length; i++) {
-    
-      if (i > 3 && i < nodeArgs.length) {
-        song = song + "+" + nodeArgs[i];
-      } else {
-        song += nodeArgs[i];
-    
-      }
+    var spotify = new Spotify({
+        id: "15de86dfa227460987ce53e3269cf66e",
+        secret: "16a21634a1794bf08814d880bce266ad"
+    });
+
+
+    if (song === ' ' || song === undefined) {
+        song = "love"
     }
-    
-    var queryUrl = 
-    
-    // This line is just to help us debug against the actual URL.
-    console.log(queryUrl);
-    
-    axios.get(queryUrl).then(
-      function(response) {
-        console.log("Artist Name: " + response.data.Artist);
-        console.log("Song Title: " + response.data.Track);
-        console.log("Spotify Link: " + response.data.Link);
-        console.log("Album: " + response.data.Album);
-        
-      })
-      .catch(function(error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log("---------------Data---------------");
-          console.log(error.response.data);
-          console.log("---------------Status---------------");
-          console.log(error.response.status);
-          console.log("---------------Status---------------");
-          console.log(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an object that comes back with details pertaining to the error that occurred.
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log("Error", error.message);
+
+    spotify.search({ type: 'track', query: song }, function (err, data) {
+        if (err) {
+            console.log('Error occurred: ' + err);
+            return;
+        };
+
+        var songs = data.tracks.items;
+        for (let i = 0; i < songs.length; i++) {
+
+            console.log('number: ', i + 1, '/', songs.length);
+            console.log("Artist Name: " + songs[i].artists[0].name);
+            console.log("Song Title: " + songs[i].name);
+            console.log("Spotify Link: " + songs[i].preview_url);
+            console.log("Album: " + songs[i].album.name);
+
+            // console.log('artist(s): ', songs[i].artists[0].name);
+            // console.log('song name: ', songs[i].name);
+            // console.log('preview song: ', songs[i].preview_url);
+            // console.log('album: ', songs[i].album.name);
+
         }
-        console.log(error.config);
-      });
+    });
 
 }
 
