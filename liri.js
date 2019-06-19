@@ -179,12 +179,11 @@ class BandsInTown {
       var location = [venue.city, venue.region, venue.country
                       ].filter(e => e.length > 0).join(", ");
       var date = this.moment(element.datetime).format("MM/DD/YYYY");
-
-      console.log("\n");
+      
       console.log("*********************************************");
-      console.log("* " + `Venue: ${venue.name}`);
+      console.log("* " + `Venue   : ${venue.name}`);
       console.log("* " + `Location: ${location}`);
-      console.log("* " + `Date: ${date}`);
+      console.log("* " + `Date    : ${date}`);
     }
     console.log("*********************************************");
   }
@@ -201,14 +200,13 @@ class Spotify {
    
   }
 
-  searchSong(song = "The Sign") {
+  searchSong(song = "Endless Love") {
     var params = {
       type: 'track',
       query: song,
       limit: 5
      }
-
-    console.log(`\n=======\nSearching for the song "${song}"`);
+    
     this.api.search(params, function(err, data) {
       if (err) {
         console.log('Error occurred: ' + err);
@@ -217,10 +215,8 @@ class Spotify {
       else if (data.tracks.items.length === 0) {
         console.log("No song found.");
         return;
-      }
-      // console.log(data);
-
-      console.log(`\n=======\nSeach result for the song "${song}"`);
+      }      
+      
       var items = data.tracks.items;
       for (var i = 0; i < items.length; i++ ) {
         var artist = items[i].artists.map(a => a.name).join(", ");
@@ -228,12 +224,11 @@ class Spotify {
         var link = items[i].external_urls.spotify;
         var album = items[i].album.name;
 
-        console.log("***********************************************************");
-        // console.log("- " + (i + 1) + " -");
+        console.log("***********************************************************");        
         console.log("* " + `Artist(s): ${artist}`);
         console.log("* " + `Song Name: ${songName}`);
-        console.log("* " + `Link: ${link}`);
-        console.log("* " + `Album: ${album}`);
+        console.log("* " + `Link     : ${link}`);
+        console.log("* " + `Album    : ${album}`);
         
       }
       console.log("***********************************************************");
@@ -263,37 +258,36 @@ class OMDbAPI {
     
     if (movieName.length === 0) {
       movieName = "Mr. Nobody";
-      console.log("\n");
-      console.log("*********************************************************************************************************");
+      
+      console.log("**********************************************************************");
       console.log("* If you haven't watched Mr. Nobody, then you should. its on Netflix!");
-      console.log("*********************************************************************************************************");
-      console.log("\n");
+      console.log("**********************************************************************");
+      
     }
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";    
     
-    console.log(queryUrl);
-    
+        
     axios.get(queryUrl).then(
       function(response) {
-        console.log("\n");
-        console.log("*********************************************************************************************************");
-        console.log("* " + "Movie Name: " + response.data.Title);
+        
+        console.log("**********************************************************************");
+        console.log("* " + "Movie Name  : " + response.data.Title);
         console.log("* " + "Release Year: " + response.data.Year);
-        console.log("* " + "IMDB Rating: " + response.data.imdbRating);
-        console.log("* " + "Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
-        console.log("* " + "Language : " + response.data.Language);
-        console.log("* " + "Plot: " + response.data.Plot);
-        console.log("* " + "Actors: " + response.data.Actors);
-        console.log("*********************************************************************************************************");
+        console.log("* " + "IMDB Rating : " + response.data.imdbRating);
+        console.log("* " + "RT Rating   : " + response.data.Ratings[1].Value);
+        console.log("* " + "Language    : " + response.data.Language);
+        console.log("* " + "Plot        : " + response.data.Plot);
+        console.log("* " + "Actors      : " + response.data.Actors);
+        console.log("**********************************************************************");
       })
       .catch(function(error) {
         if (error.response) {
          
-          console.log("---------------Data---------------");
+          console.log("**********************************************************************");
           console.log(error.response.data);
-          console.log("---------------Status---------------");
+          console.log("**********************************************************************");
           console.log(error.response.status);
-          console.log("---------------Status---------------");
+          console.log("**********************************************************************");
           console.log(error.response.headers);
         } else if (error.request) {
           
